@@ -1,0 +1,169 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&display=swap");
+
+:root {
+  --main-color: #68a504;
+  --black: #141414;
+  --text: #cdcdcd;
+  --text-dark: #9a9a9a;
+  --gray: #181818;
+  --red: #942a2a;
+}
+
+@font-face {
+  font-family: "Zaptron";
+  src: url("/assets/fonts/Zaptron/Zaptron-Regular.woff2") format("woff2"),
+    url("/assets/fonts/Zaptron/Zaptron-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background-color: var(--black);
+  margin: 0px;
+  padding: 0px;
+  color: var(--text);
+  font-family: "Rubik", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.main-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.auth-section {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 10vw;
+  height: 100%;
+}
+
+.auth-section > h1 {
+  font-weight: 700;
+  font-size: 40px;
+  margin: 0;
+}
+
+.auth-section > h2 {
+  color: var(--text-dark);
+  font-size: 14px;
+  margin: 0.5rem 0;
+}
+
+.auth-section > .alert {
+  background-color: var(--red);
+  padding: 0.5em;
+  margin-bottom: 1em;
+  font-size: 14px;
+  border-radius: 0.25em;
+  width: 100%;
+}
+
+.auth-section > form {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  position: relative;
+  padding-top: 1.5rem;
+  & + .input {
+    margin-top: 1.5rem;
+  }
+}
+
+.input-label {
+  color: var(--text-dark);
+  position: absolute;
+  top: 1.5rem;
+  transition: 0.25s ease;
+}
+
+.input-field {
+  border: 0;
+  z-index: 1;
+  background-color: transparent;
+  border-bottom: 2px solid var(--text-dark);
+  font: inherit;
+  font-size: 1.125rem;
+  padding: 0.25rem 0;
+  color: var(--text);
+  &:focus,
+  &:valid {
+    outline: 0;
+    border-bottom-color: white;
+    & + .input-label {
+      color: white;
+      transform: translateY(-1.5rem);
+    }
+  }
+}
+
+.auth-section > form > button {
+  margin-top: 3rem;
+  width: 100%;
+  background-color: var(--main-color);
+  color: var(--text);
+  font-weight: 700;
+  font-size: clamp(14px, 1.2vw, 1.2rem);
+  border: none;
+  padding: 1rem 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.auth-section > p {
+  margin-top: 1.5rem;
+  color: var(--text-dark);
+}
+
+.auth-section > p > a {
+  color: var(--main-color);
+}
+
+.auth-section > p > a:hover {
+  text-decoration: underline;
+}
+
+.logo-section {
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--gray);
+  height: 100%;
+}
+
+.logo-section > img {
+  object-fit: contain;
+  width: 50%;
+}
+
+.logo-section > h1 {
+  font-family: "Zaptron";
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .logo-section {
+    display: none;
+  }
+  .auth-section {
+    width: 100%;
+  }
+}
