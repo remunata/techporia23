@@ -2103,3 +2103,25 @@ textarea {
         width: 100%;
     }
 }
+
+.submission-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    border: none;
+}
+@media (max-width: 1200px) {
+    .submission-flex {
+        flex-direction: column;
+    }
+}
+
+.submission-title {
+    font-family: "Zaptron";
+    text-align: center;
+}
+
+.submission-detail {
+    padding: 2rem;
+}

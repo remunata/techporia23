@@ -19,13 +19,17 @@ class AddBerkasTable extends Migration
                 'type'              => 'VARCHAR',
                 'constraint'        => 6,
             ],
-            'nama_berkas' => [
-                'type'              => 'TEXT',
-            ] ,
+            'berkas' => [
+                'type'              => 'VARCHAR',
+                'constraint'        => 100,
+            ],
             'jenis' => [
                 'type'              => 'ENUM',
                 'constraint'        => ['proposal', 'source_code'],
                 'default'           => 'proposal',
+            ],
+            'created_at' => [
+                'type'              => 'DATETIME',
             ],
         ]);
         $this->forge->addKey('berkas_id', true);

@@ -210,13 +210,63 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Berkas Tim</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Berkas Proposal</h6>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-
+                    <?php if ($berkasProposal): ?>
+                        <div class="d-flex justify-content-between">
+                            <a href="<?= base_url('admin/download/' . $berkasProposal['berkas_id']); ?>"
+                                class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-download"></i>
+                                </span>
+                                <span class="text">Download Berkas</span>
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="d-flex justify-content-between">
+                            <a class="btn btn-info btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-info"></i>
+                                </span>
+                                <span class="text">Belum di Upload</span>
+                            </a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
+            <?php if ($data['id_kompetisi'] == 2): ?>
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Berkas Source Code</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <?php if ($berkasSourceCode): ?>
+                            <div class="d-flex justify-content-between">
+                                <a href="<?= base_url('admin/download/' . $berkasSourceCode['berkas_id']); ?>"
+                                    class="btn btn-primary btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-download"></i>
+                                    </span>
+                                    <span class="text">Download Berkas</span>
+                                </a>
+                            </div>
+                        <?php else: ?>
+                            <div class="d-flex justify-content-between">
+                                <a class="btn btn-info btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-info"></i>
+                                    </span>
+                                    <span class="text">Belum di Upload</span>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 

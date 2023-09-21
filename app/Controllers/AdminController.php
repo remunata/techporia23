@@ -171,8 +171,14 @@ class AdminController extends BaseController
             ->where('role', 'anggota')
             ->findAll();
 
+        $berkasModel = new BerkasModel();
+        $berkasProposal = $berkasModel->where('tim_id', $id)->where('jenis', 'proposal')->first();
+        $berkasSourceCode = $berkasModel->where('tim_id', $id)->where('jenis', 'source_code')->first();
+
         return view('admin/detail_tim', [
             'data' => $dataTim,
+            'berkasProposal' => $berkasProposal,
+            'berkasSourceCode' => $berkasSourceCode,
         ]);
     }
 
@@ -200,15 +206,15 @@ class AdminController extends BaseController
 
         $dataSeminarModel = new DataSeminarModel();
         $dataSeminar = [
-            'username'  => $this->request->getPost('username'),
-            'name'      => $this->request->getPost('nama'),
-            'phone'     => $this->request->getPost('phone'),
-            'email'     => $this->request->getPost('email'),
-            'instansi'  => $this->request->getPost('instansi'),
-            'domisili'  => $this->request->getPost('domisili'),
-            'kategori'  => $this->request->getPost('kategori'),
-            'status'    => $this->request->getPost('status'),
-            'order_id'  => Utils::generateOrderId(),
+            'username' => $this->request->getPost('username'),
+            'name' => $this->request->getPost('nama'),
+            'phone' => $this->request->getPost('phone'),
+            'email' => $this->request->getPost('email'),
+            'instansi' => $this->request->getPost('instansi'),
+            'domisili' => $this->request->getPost('domisili'),
+            'kategori' => $this->request->getPost('kategori'),
+            'status' => $this->request->getPost('status'),
+            'order_id' => Utils::generateOrderId(),
         ];
         $dataSeminarModel->save($dataSeminar);
 
@@ -224,7 +230,7 @@ class AdminController extends BaseController
         ];
         $transactionsModel->save($transactions);
 
-        return redirect()->to('admin/detail-seminar/'.$this->request->getPost('username'));
+        return redirect()->to('admin/detail-seminar/' . $this->request->getPost('username'));
     }
 
     public function createTiket($username = null)
@@ -269,7 +275,7 @@ class AdminController extends BaseController
         $tiketModel = new TiketModel();
         $tiket = $tiketModel->where('username', $username)->first();
 
-        if (! $tiket) {
+        if (!$tiket) {
             return redirect()->back()->with('error', 'Tiket tidak ditemukan');
         }
 
@@ -304,11 +310,11 @@ class AdminController extends BaseController
 
 
 
-    public function downloadBerkas($id = null)
+    public function downloadBerkas($idBerkas = null)
     {
         $berkasModel = new BerkasModel();
-        $berkas = $berkasModel->where('tim_id', $id)->first();
+        $berkas = $berkasModel->where('berkas_id', $idBerkas)->first();
 
-        return $this->response->download('uploads/berkas/' . $berkas['nama_berkas'], null);
+        return $this->response->download(WRITEPATH . $berkas['berkas'], null);
     }
 }

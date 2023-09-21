@@ -24,7 +24,7 @@ class MainController extends BaseController
                 ->join('data_seminar', 'data_seminar.order_id=transactions.order_id')
                 ->where('data_seminar.username', auth()->user()->username)
                 ->first();
-            
+
             if ($status) {
                 $status = $status['transaction_status'];
             }
@@ -61,13 +61,23 @@ class MainController extends BaseController
                 ->like('nama_kompetisi', substr($kompetisi, 0, 2), 'after')
                 ->where('anggota', auth()->user()->username)->first();
 
+            $isVerified = false;
+            if ($data) {
+                $dataTimModel = new DataTimModel();
+                $isVerified = $dataTimModel->select('status')
+                    ->where('tim_id', $data['tim_id'])
+                    ->first()['status'] == 'verified';
+            }
+
             return view('kompetisi/' . $kompetisi, [
                 'data' => $data,
+                'isVerified' => $isVerified,
             ]);
         }
 
         return view('kompetisi/' . $kompetisi, [
             'data' => null,
+            'isVerified' => false,
         ]);
     }
 

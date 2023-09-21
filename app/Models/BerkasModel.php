@@ -12,7 +12,8 @@ class BerkasModel extends Model
     protected $allowedFields = [
         'berkas_id',
         'tim_id',
-        'nama_berkas',
+        'berkas',
         'jenis',
+        'created_at',
     ];
 }

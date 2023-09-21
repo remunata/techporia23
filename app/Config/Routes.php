@@ -61,6 +61,9 @@ $routes->group('profile', static function($routes) {
     $routes->post('terima-anggota', 'UserController::terimaAnggota');
     $routes->post('upload-berkas', 'UserController::uploadBerkas');
     $routes->post('ubah-password', 'UserController::ubahPassword');
+    $routes->get('submission', 'UserController::submission');
+    $routes->post('submission/proposal', 'UserController::submissionProposal');
+    $routes->post('submission/source-code', 'UserController::submissionSourceCode');
 });
 
 $routes->group('admin', ['filter' => 'admin-auth'], static function($routes) {

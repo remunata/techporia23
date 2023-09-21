@@ -175,6 +175,9 @@
                                 <?php if ($t['transaction_status'] != 'settlement' && $t['transaction_status'] != 'capture'): ?>
                                     <a href="<?= base_url('kompetisi/payment/' . $t['tim_id']) ?>"
                                         class="btn btn-outline-primary">Lanjutkan Pembayaran</a>
+                                <?php elseif (($t['id_kompetisi'] == 2 || $t['id_kompetisi'] == 3 || $t['id_kompetisi'] == 5) && $t['status'] == 'verified'): ?>
+                                    <a href="<?= base_url('profile/submission?id=' . $t['tim_id']) ?>"
+                                        class="btn btn-outline-primary">Submission</a>
                                 <?php endif; ?>
                             </div>
                         </td>

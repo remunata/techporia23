@@ -36,7 +36,7 @@ class UserController extends BaseController
 
         $anggotaTimModel = new AnggotaTimModel();
         $tim = $anggotaTimModel
-            ->select('data_tim.tim_id, nama_tim, nama_kompetisi, status, role, transaction_status')
+            ->select('data_tim.tim_id, nama_tim, kompetisi.id_kompetisi, nama_kompetisi, status, role, transaction_status')
             ->join('data_tim', 'data_tim.tim_id=anggota_tim.tim_id', 'left')
             ->join('user_data', 'user_data.username=anggota_tim.anggota', 'left')
             ->join('transactions', 'transactions.order_id=data_tim.order_id', 'left')
@@ -103,26 +103,6 @@ class UserController extends BaseController
         if ($this->request->getPost('change')) {
 
             $userDataModel = new UserDataModel();
-            // $userData = $userDataModel->find(auth()->user()->username);
-            // $validationRules = $validation->getRuleGroup('userData');
-            // if ($validationRules) {
-            //     $validationRules['kpm'] = null;
-
-            //     if ($this->request->getPost('nim') === $userData['nim']) {
-            //         $validationRules['nim']['rules'] = 'required|min_length[3]|max_length[100]';
-            //     }
-
-            //     $validation->setRules($validationRules);
-            // }
-
-            // if ($validation->withRequest($this->request)->run() === false) {
-            //     $session = Services::session();
-            //     $session->setFlashdata('alert', $validation->getErrors());
-            //     $session->setFlashdata('alertTitle', 'Validation Error');
-            //     $session->setFlashdata('alertType', 'warning');
-            //     return redirect()->to('/profile');
-            // }
-
             $data = [
                 'nama' => $this->request->getPost('nama'),
                 'nim' => $this->request->getPost('nim'),
@@ -280,40 +260,145 @@ class UserController extends BaseController
         return redirect()->to('/profile');
     }
 
-    public function uploadBerkas()
+    public function submission()
     {
-        $validation = Services::validation();
-        $validation->setRuleGroup('berkas');
+        $idTim = $this->request->getVar('id');
 
-        $session = Services::session();
+        $dataTimModel = new DataTimModel();
+        $data = $dataTimModel->where('tim_id', $idTim)->first();
+
+        if (!$data) {
+            $session = Services::session();
+            $session->setFlashdata('alert', 'Tim tidak ditemukan');
+            $session->setFlashdata('alertTitle', 'Error');
+            $session->setFlashdata('alertType', 'error');
+            return redirect()->back();
+        }
+
+        $anggotaTimModel = new AnggotaTimModel();
+        $checkAnggota = $anggotaTimModel->where('anggota', auth()->user()->username)
+            ->where('tim_id', $idTim)->first();
+
+        if (!$checkAnggota) {
+            $session = Services::session();
+            $session->setFlashdata('alert', 'Anda bukan anggota tim ini');
+            $session->setFlashdata('alertTitle', 'Error');
+            $session->setFlashdata('alertType', 'error');
+            return redirect()->back();
+        }
+
+        $berkasModel = new BerkasModel();
+        $dataProposal = $berkasModel->select('created_at')->where('tim_id', $idTim)->where('jenis', 'proposal')->first();
+        $dataSourceCode = $berkasModel->select('created_at')->where('tim_id', $idTim)->where('jenis', 'source_code')->first();
+
+        return view('kompetisi/submission', [
+            'data' => $data,
+            'dataProposal' => $dataProposal,
+            'dataSourceCode' => $dataSourceCode,
+        ]);
+    }
+
+    public function submissionProposal()
+    {
+        $anggotaTimModel = new AnggotaTimModel();
+        $checkAnggota = $anggotaTimModel->where('anggota', auth()->user()->username)
+            ->where('tim_id', $this->request->getPost('tim_id'))->first();
+
+        if (!$checkAnggota) {
+            $session = Services::session();
+            $session->setFlashdata('alert', 'Anda bukan anggota tim ini');
+            $session->setFlashdata('alertTitle', 'Error');
+            $session->setFlashdata('alertType', 'error');
+            return redirect()->to('/');
+        }
+
+        $validation = Services::validation();
+        $validation->setRuleGroup('submissionProposal');
 
         if ($validation->withRequest($this->request)->run() === false) {
-            $session->setFlashdata('error', 'Berkas gagal diunggah');
-            return redirect()->to('/profile');
+            return redirect()->back()->withInput();
         }
 
-        $file = $this->request->getFile('berkas');
-        $fileName = $file->getRandomName();
-        $file->move(ROOTPATH . 'public/uploads/berkas', $fileName);
-
-        $timId = $this->request->getPost('tim_id');
         $berkasModel = new BerkasModel();
-        $berkas = $berkasModel->where('tim_id', $timId)->first();
+        $dataProposal = $berkasModel->where('tim_id', $this->request->getPost('tim_id'))
+            ->where('jenis', 'proposal')->first();
 
-        if ($berkas != null) {
-            unlink(ROOTPATH . 'public/uploads/berkas/' . $berkas['nama_berkas']);
-            $berkasModel->where('tim_id', $timId)
-                ->set('nama_berkas', $fileName)
-                ->update();
-        } else {
-            $data = [
-                'tim_id' => $timId,
-                'nama_berkas' => $fileName,
+        if (!$dataProposal) {
+            $dataProposal = [
+                'tim_id' => $this->request->getPost('tim_id'),
+                'jenis' => 'proposal',
             ];
-            $berkasModel->insert($data);
+        } else {
+            unlink(WRITEPATH . $dataProposal['berkas']);
         }
 
-        $session->setFlashdata('success', 'Berkas berhasil diunggah');
+        $dataProposal['created_at'] = date('Y-m-d H-i-s');
+
+        $proposal = $this->request->getFile('proposal');
+        if (!$proposal->hasMoved()) {
+            $filepath = 'uploads/' . $proposal->store();
+            $dataProposal['berkas'] = $filepath;
+        }
+
+        $berkasModel->save($dataProposal);
+
+        $session = Services::session();
+        $session->setFlashdata('alert', 'Submission Proposal berhasil di Upload');
+        $session->setFlashdata('alertTitle', 'Success');
+        $session->setFlashdata('alertType', 'success');
+
+        return redirect()->to('/profile');
+    }
+
+    public function submissionSourceCode()
+    {
+        $anggotaTimModel = new AnggotaTimModel();
+        $checkAnggota = $anggotaTimModel->where('anggota', auth()->user()->username)
+            ->where('tim_id', $this->request->getPost('tim_id'))->first();
+
+        if (!$checkAnggota) {
+            $session = Services::session();
+            $session->setFlashdata('alert', 'Anda bukan anggota tim ini');
+            $session->setFlashdata('alertTitle', 'Error');
+            $session->setFlashdata('alertType', 'error');
+            return redirect()->to('/');
+        }
+
+        $validation = Services::validation();
+        $validation->setRuleGroup('submissionSourceCode');
+
+        if ($validation->withRequest($this->request)->run() === false) {
+            return redirect()->back()->withInput();
+        }
+
+        $berkasModel = new BerkasModel();
+        $dataSourceCode = $berkasModel->where('tim_id', $this->request->getPost('tim_id'))
+            ->where('jenis', 'source_code')->first();
+
+        if (!$dataSourceCode) {
+            $dataSourceCode = [
+                'tim_id' => $this->request->getPost('tim_id'),
+                'jenis' => 'source_code',
+            ];
+        } else {
+            unlink(WRITEPATH . $dataSourceCode['berkas']);
+        }
+
+        $dataSourceCode['created_at'] = date('Y-m-d H-i-s');
+
+        $sourceCode = $this->request->getFile('source_code');
+        if (!$sourceCode->hasMoved()) {
+            $filepath = 'uploads/' . $sourceCode->store();
+            $dataSourceCode['berkas'] = $filepath;
+        }
+
+        $berkasModel->save($dataSourceCode);
+
+        $session = Services::session();
+        $session->setFlashdata('alert', 'Submission Source Code berhasil di Upload');
+        $session->setFlashdata('alertTitle', 'Success');
+        $session->setFlashdata('alertType', 'success');
+
         return redirect()->to('/profile');
     }
 
