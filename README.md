@@ -25,12 +25,14 @@ cp /env ./.env
 php spark key:generate
 ```
 
-6. Configure database connection in ```.env``` file with username, password, and your database name, then migrate database
+6. Add your server and client key for midtrans in ```.env``` file
+
+7. Configure database connection in ```.env``` file with username, password, and your database name, then migrate database
 ```
 php spark migrate -all
 ``` 
 
-7. Open mysql cli and insert this data into kompetisi table
+8. Open mysql cli and insert this data into kompetisi table
 ```
 INSERT INTO kompetisi VALUES (1, 'Competitive Programming');
 INSERT INTO kompetisi VALUES (2, 'Web Development');
@@ -39,9 +41,9 @@ INSERT INTO kompetisi VALUES (4, 'Networking Competition');
 INSERT INTO kompetisi VALUES (5, 'Business Plan');
 ```
 
-8. Launch application
+9. Launch application
 ```
 php spark serve
 ```
 
-9. Open application in default port ```localhost:8080```
+10. Open application in default port ```localhost:8080```
