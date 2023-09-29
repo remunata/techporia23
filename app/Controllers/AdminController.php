@@ -317,4 +317,215 @@ class AdminController extends BaseController
 
         return $this->response->download(WRITEPATH . $berkas['berkas'], null);
     }
+
+    public function dashboardFinance()
+    {
+        $dataTimModel = new DataTimModel();
+        $competitions = $dataTimModel->select('data_tim.tim_id, nama_tim, nama_kompetisi, gross_amount, payment_type')
+            ->join('kompetisi', 'kompetisi.id_kompetisi=data_tim.id_kompetisi')
+            ->join('transactions', 'transactions.order_id=data_tim.order_id')
+            ->where('transaction_status', 'settlement')
+            ->findAll();
+        
+        foreach ($competitions as $idx => $val) {
+            switch ($val['payment_type']) {
+                case 'qris':
+                    $fee = floor($val['gross_amount'] * 0.7 / 100);
+                    break;
+                case 'gopay':
+                    $fee = floor($val['gross_amount'] * 2 / 100);
+                    break;
+                case 'bank_transfer':
+                    $fee = 4440;
+                    break;
+                case 'echannel':
+                    $fee = 4440;
+                    break;
+                default:
+                    $fee = 0;
+                }
+
+                $competitions[$idx]['fee'] = $fee;
+                $competitions[$idx]['pendapatan'] = $val['gross_amount'] - $fee;
+        }
+
+        $grossAmountLomba = 0;
+        $pendapatanLomba = 0;
+        foreach ($competitions as $val) {
+            $grossAmountLomba += $val['gross_amount'];
+            $pendapatanLomba += $val['pendapatan'];
+        }
+
+        $dataSeminarModel = new DataSeminarModel();
+        $seminar = $dataSeminarModel->select('name, instansi, status, kategori, gross_amount, payment_type')
+            ->join('transactions', 'transactions.order_id=data_seminar.order_id')
+            ->where('transaction_status', 'settlement')
+            ->findAll();
+
+        foreach ($seminar as $idx => $val) {
+            switch ($val['payment_type']) {
+                case 'qris':
+                    $fee = floor($val['gross_amount'] * 0.7 / 100);
+                    break;
+                case 'gopay':
+                    $fee = floor($val['gross_amount'] * 2 / 100);
+                    break;
+                case 'bank_transfer':
+                    $fee = 4440;
+                    break;
+                case 'echannel':
+                    $fee = 4440;
+                    break;
+                default:
+                    $fee = 0;
+                }
+
+                $seminar[$idx]['fee'] = $fee;
+                $seminar[$idx]['pendapatan'] = $val['gross_amount'] - $fee;
+        }
+
+        $grossAmountSeminar = 0;
+        $pendapatanSeminar = 0;
+        foreach ($seminar as $val) {
+            $grossAmountSeminar += $val['gross_amount'];
+            $pendapatanSeminar += $val['pendapatan'];
+        }
+
+        return view('admin/finance', [
+            'competitions' => $competitions,
+            'grossAmountLomba' => $grossAmountLomba,
+            'pendapatanLomba' => $pendapatanLomba,
+            'seminar' => $seminar,
+            'grossAmountSeminar' => $grossAmountSeminar,
+            'pendapatanSeminar' => $pendapatanSeminar,
+        ]);
+    }
+
+    public function financeSeminar()
+    {
+        $dataSeminarModel = new DataSeminarModel();
+        $seminarOffline = $dataSeminarModel->select('name, instansi, status, kategori, gross_amount, payment_type')
+            ->join('transactions', 'transactions.order_id=data_seminar.order_id')
+            ->where('transaction_status', 'settlement')
+            ->where('payment_type', 'offline')
+            ->findAll();
+        
+        foreach ($seminarOffline as $idx => $val) {
+            switch ($val['payment_type']) {
+                case 'qris':
+                    $fee = floor($val['gross_amount'] * 0.7 / 100);
+                    break;
+                case 'gopay':
+                    $fee = floor($val['gross_amount'] * 2 / 100);
+                    break;
+                case 'bank_transfer':
+                    $fee = 4440;
+                    break;
+                case 'echannel':
+                    $fee = 4440;
+                    break;
+                default:
+                    $fee = 0;
+                }
+
+                $seminarOffline[$idx]['fee'] = $fee;
+                $seminarOffline[$idx]['pendapatan'] = $val['gross_amount'] - $fee;
+        }
+
+        $grossAmountOffline = 0;
+        $pendapatanOffline = 0;
+        foreach ($seminarOffline as $val) {
+            $grossAmountOffline += $val['gross_amount'];
+            $pendapatanOffline += $val['pendapatan'];
+        }
+
+        $seminarOnline = $dataSeminarModel->select('name, instansi, status, kategori, gross_amount, payment_type')
+            ->join('transactions', 'transactions.order_id=data_seminar.order_id')
+            ->where('transaction_status', 'settlement')
+            ->where('payment_type !=', 'offline')
+            ->findAll();
+        
+        foreach ($seminarOnline as $idx => $val) {
+            switch ($val['payment_type']) {
+                case 'qris':
+                    $fee = floor($val['gross_amount'] * 0.7 / 100);
+                    break;
+                case 'gopay':
+                    $fee = floor($val['gross_amount'] * 2 / 100);
+                    break;
+                case 'bank_transfer':
+                    $fee = 4440;
+                    break;
+                case 'echannel':
+                    $fee = 4440;
+                    break;
+                default:
+                    $fee = 0;
+                }
+
+                $seminarOnline[$idx]['fee'] = $fee;
+                $seminarOnline[$idx]['pendapatan'] = $val['gross_amount'] - $fee;
+        }
+
+        $grossAmountOnline = 0;
+        $pendapatanOnline = 0;
+        foreach ($seminarOnline as $val) {
+            $grossAmountOnline += $val['gross_amount'];
+            $pendapatanOnline += $val['pendapatan'];
+        }
+
+        return view('admin/finance_seminar', [
+            'seminarOffline' => $seminarOffline,
+            'grossAmountOffline' => $grossAmountOffline,
+            'pendapatanOffline' => $pendapatanOffline,
+            'seminarOnline' => $seminarOnline,
+            'grossAmountOnline' => $grossAmountOnline,
+            'pendapatanOnline' => $pendapatanOnline,
+        ]);
+    }
+
+    public function financeLomba()
+    {
+        $dataTimModel = new DataTimModel();
+        $competitions = $dataTimModel->select('data_tim.tim_id, nama_tim, nama_kompetisi, gross_amount, payment_type')
+            ->join('kompetisi', 'kompetisi.id_kompetisi=data_tim.id_kompetisi')
+            ->join('transactions', 'transactions.order_id=data_tim.order_id')
+            ->where('transaction_status', 'settlement')
+            ->findAll();
+        
+        foreach ($competitions as $idx => $val) {
+            switch ($val['payment_type']) {
+                case 'qris':
+                    $fee = floor($val['gross_amount'] * 0.7 / 100);
+                    break;
+                case 'gopay':
+                    $fee = floor($val['gross_amount'] * 2 / 100);
+                    break;
+                case 'bank_transfer':
+                    $fee = 4440;
+                    break;
+                case 'echannel':
+                    $fee = 4440;
+                    break;
+                default:
+                    $fee = 0;
+                }
+
+                $competitions[$idx]['fee'] = $fee;
+                $competitions[$idx]['pendapatan'] = $val['gross_amount'] - $fee;
+        }
+
+        $grossAmountLomba = 0;
+        $pendapatanLomba = 0;
+        foreach ($competitions as $val) {
+            $grossAmountLomba += $val['gross_amount'];
+            $pendapatanLomba += $val['pendapatan'];
+        }
+
+        return view('admin/finance_lomba', [
+            'competitions' => $competitions,
+            'grossAmountLomba' => $grossAmountLomba,
+            'pendapatanLomba' => $pendapatanLomba,
+        ]);
+    }
 }

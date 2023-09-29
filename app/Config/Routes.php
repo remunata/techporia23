@@ -69,6 +69,9 @@ $routes->group('profile', static function($routes) {
 $routes->group('admin', ['filter' => 'admin-auth'], static function($routes) {
     $routes->get('dashboard', 'AdminController::index');
     $routes->get('seminar', 'AdminController::seminar');
+    $routes->get('finance', 'AdminController::dashboardFinance');
+    $routes->get('finance/seminar', 'AdminController::financeSeminar');
+    $routes->get('finance/lomba', 'AdminController::financeLomba');
     $routes->get('detail-seminar/(:segment)', 'AdminController::detailSeminar/$1');
     $routes->get('lomba/(:segment)', 'AdminController::lomba/$1');
     $routes->get('seminar/add', 'AdminController::addSeminar');
