@@ -32,13 +32,9 @@ php spark key:generate
 php spark migrate -all
 ``` 
 
-8. Open mysql cli and insert this data into kompetisi table
-```
-INSERT INTO kompetisi VALUES (1, 'Competitive Programming');
-INSERT INTO kompetisi VALUES (2, 'Web Development');
-INSERT INTO kompetisi VALUES (3, 'UI/UX Design');
-INSERT INTO kompetisi VALUES (4, 'Networking Competition');
-INSERT INTO kompetisi VALUES (5, 'Business Plan');
+8. Run the seeds:
+```console
+php spark db:seed KompetisiSeeder
 ```
 
 9. Launch application
