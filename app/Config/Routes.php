@@ -66,7 +66,7 @@ $routes->group('profile', static function($routes) {
     $routes->post('submission/source-code', 'UserController::submissionSourceCode');
 });
 
-$routes->group('admin', ['filter' => 'admin-auth'], static function($routes) {
+$routes->group('admin', ['filter' => 'group:admin'], static function($routes) {
     $routes->get('dashboard', 'AdminController::index');
     $routes->get('seminar', 'AdminController::seminar');
     $routes->get('finance', 'AdminController::dashboardFinance');
