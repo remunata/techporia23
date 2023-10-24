@@ -22,7 +22,6 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'session'       => \CodeIgniter\Shield\Filters\SessionAuth::class,
         'admin-auth'    => AdminAuth::class,
     ];
 
