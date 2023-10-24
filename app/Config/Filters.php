@@ -8,7 +8,6 @@ use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\SecureHeaders;
-use App\Filters\AdminAuth;
 
 class Filters extends BaseConfig
 {
@@ -23,7 +22,6 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'session'       => \CodeIgniter\Shield\Filters\SessionAuth::class,
-        'admin-auth'    => AdminAuth::class,
     ];
 
     /**
